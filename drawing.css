@@ -1,0 +1,21 @@
+
+#wrapper{
+	height:100%;
+	width: 100%;
+	color: white;
+	font-family: sans-serif;
+	text-align: center;
+	background-color: orchid;
+}
+
+#c-wrapper{
+	width: 440px;
+	margin: 0px auto;
+	
+}
+
+#c{
+	background-color: linen;
+	border: 1px solid black;
+	//setting height in css breaks behavior
+}
