@@ -23,7 +23,6 @@ $(document).ready(function(){
 		}
 
 		function text(){
-			alert(el.width);
 			ctx.font = "300px sans-serif";
 			ctx.fillStyle = "red";
 			ctx.textAlign = "center";
