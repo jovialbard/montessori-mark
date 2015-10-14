@@ -1,3 +1,6 @@
+body {
+	margin: 0px;
+}
 
 #wrapper{
 	height:100%;
@@ -5,7 +8,9 @@
 	color: white;
 	font-family: sans-serif;
 	text-align: center;
-	background-color: orchid;
+	padding-top: 50px;
+	background-color: beige;
+	//wood textured background?
 }
 
 #check{
@@ -31,7 +36,7 @@
 }
 
 #c{
-	background-color: linen;
+	background-color: orchid;
 	border: 1px solid black;
 	//setting height in css breaks behavior
 }
