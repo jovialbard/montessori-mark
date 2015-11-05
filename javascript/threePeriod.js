@@ -1,60 +1,62 @@
-	function threePeriodLesson() {
-		var el = document.getElementById('c');
-		var letters = [];
-		letters[0] = new Letter(el,{exclude: letters});
-		letters[0].introduce({onComplete: function(){
-			clearScreen();
-			letters[1] = new Letter(el,{exclude: letters});
-			letters[1].introduce({onComplete: function(){
-				clearScreen();
-				letters[2] = new Letter(el,{exclude: letters});
-				letters[2].introduce({onComplete: function(){
-					firstPeriod(letters,function(){
-						secondPeriod(letters,function(){
-							thirdPeriod(letters,function(){
-								playSound('6-thank-you.wav');
-								clearScreen();
-							});
-						});
-					});
-				}});
-			}});
-		}});
-	}
-	
-	function firstPeriod(letters,onComplete) {
-		//@todo show the three letters side by side
-		//@todo highlight and unhighlight the letters as we play them
-		playSound(letters[0]+'.wav');
-		setTimeout(function(){						
-			playSound(letters[1]+'.wav');
-		},2000);
-		setTimeout(function(){						
-			playSound(letters[2]+'.wav');
-		},4000);
-		if(onComplete) {
-			onComplete();
-		}
-	}
-	
-	function secondPeriod(letters,onComplete) {
-		/*
-		 * @todo say the sound and ask the child to touch that letter in the following order:
-		 * last, first, second, random, random from other two, remaining
-		 */
-		if(onComplete) {
-			onComplete();
-		}
-	}
+//@todo make the three period lesson an object
+//@todo allow the three period lesson to take any class
+function threePeriodLesson() {
+	var elements = [];
+	introduce(elements,3);
+}
 
-	function thirdPeriod(letters,onComplete) {
-		// @todo ask what sound each letter makes randomly until they get them all right or we realize they're not ready
-		if(onComplete) {
-			onComplete();
-		}
+function introduce(elements, total, count) {
+	if(!count) {
+		count = 0;
 	}
+	console.log(elements);
+	console.log(count + "/" + total);
+	function onComplete() {
+		cleanup();
+		count++;
+		if(count >= total) {
+			firstPeriod(elements);
+		} else {
+			introduce(elements, total, count);
+		}		
+	}
+	var el = $('<canvas width=400 height=400>');
+	$('#canvas-wrapper').append(el);
+	elements[count] = new Letter(el.get(0),{exclude: elements});
+	elements[count].introduce({onComplete: onComplete});
+}
 
-	function clearScreen() {
-		$('#c').html('');
-	}
-	
+function firstPeriod(elements) {
+	//@todo show the three letters side by side
+	//@todo highlight and unhighlight the letters as we play them
+	//@todo move sound playing responsibility into the element object for encapsulation
+	console.log(elements);
+	playSound(elements[0].letter+'.wav');
+	setTimeout(function(){						
+		playSound(elements[1].letter+'.wav');
+	},2000);
+	setTimeout(function(){						
+		playSound(elements[2].letter+'.wav');
+	},4000);
+	setTimeout(function(){						
+		secondPeriod(elements);
+	},6000);
+}
+
+function secondPeriod(elements) {
+	/*
+	 * @todo say the sound and ask the child to touch that letter in the following order:
+	 * last, first, second, random, random from other two, remaining
+	 */
+	thirdPeriod(elements);
+}
+
+function thirdPeriod(elements) {
+	// @todo ask what sound each letter makes randomly until they get them all right or we realize they're not ready
+	cleanup();
+}
+
+function cleanup() {
+	$('#canvas-wrapper').html('');
+}
+

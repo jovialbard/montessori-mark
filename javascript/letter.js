@@ -76,7 +76,6 @@ Letter.prototype.demonstrate = function() {
 		if (dashOffset > 0) requestAnimationFrame(loop);             // animate
 	})();
 
-	//@todo trace the letter with a colored line to show how it should be traced
 	var that = this;
 	setTimeout(function(){
 		playSound('3-your-turn.wav');
@@ -85,13 +84,44 @@ Letter.prototype.demonstrate = function() {
 }
 
 Letter.prototype.waitForInput = function() {
-	//@todo evaluate success, see draw() and calculateTransparency() below
-	var acceptable = true;
-	if(acceptable) {
-		if(this.onComplete) {
-			this.onComplete();
-		}
-	} else {
-		this.demonstrate();
+	//@todo automatically check the results, don't rely on clicking a button
+	//@todo improve the quality of the tracing check algorithm
+	this.acceptInput();
+	var that = this;
+	function click() {
+		if(false){
+			that.demonstrate();
+		}else{
+			$("#check").off('click',click);
+			$("#check").hide();
+			if(that.onComplete) {
+				that.onComplete();
+			}			
+		}		
+	}
+	$("#check").on('click',click);
+	$("#check").show();
+}
+
+Letter.prototype.acceptInput = function(){
+	var isDrawing = false;
+	var el = this.canvas;
+	var ctx = el.getContext('2d');
+	//this.offsetLeft and this.offsetTop are needed to correct for the 
+	//position of the canvas on the page
+	el.onmousedown = function(e) {
+	  isDrawing = true;
+	  ctx.moveTo(e.clientX-this.offsetLeft, e.clientY-this.offsetTop);
+	};
+	el.onmousemove = function(e) {
+	  if (isDrawing) {
+		ctx.lineWidth = 10;
+		ctx.lineJoin = ctx.lineCap = "round";
+		ctx.lineTo(e.clientX-this.offsetLeft, e.clientY-this.offsetTop);
+		ctx.stroke();
+	  }
+	};
+	el.onmouseup = function() {
+	  isDrawing = false;
 	}
 }

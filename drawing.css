@@ -29,14 +29,15 @@ body {
 	left: 0px;
 }
 
-#c-wrapper{
-	width: 440px;
+#canvas-wrapper{
 	margin: 0px auto;
-	
+	height: 440px;
 }
 
-#c{
+#canvas-wrapper canvas{
+	width: 400px;
+	height: 400px;
 	background-color: orchid;
 	border: 1px solid black;
-	//setting height in css breaks behavior
+	/* margin: 20px; */
 }
