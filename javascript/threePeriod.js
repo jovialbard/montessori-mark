@@ -1,62 +1,82 @@
-//@todo make the three period lesson an object
-//@todo allow the three period lesson to take any class
-function threePeriodLesson() {
-	var elements = [];
-	introduce(elements,3);
+var ThreePeriodLesson = function(div, type, total) {
+	this.div = div;
+	this.type = type;
+	this.total = total;
+	this.elements = [];
+}
+ThreePeriodLesson.prototype.start = function() {
+	this.introduce(this.total);
 }
 
-function introduce(elements, total, count) {
+ThreePeriodLesson.prototype.introduce = function(total, count) {
 	if(!count) {
 		count = 0;
 	}
-	console.log(elements);
+	console.log(this.elements);
 	console.log(count + "/" + total);
+	var that = this;
 	function onComplete() {
-		cleanup();
+		that.cleanup(); 
 		count++;
 		if(count >= total) {
-			firstPeriod(elements);
+			that.firstPeriod(that.elements);
 		} else {
-			introduce(elements, total, count);
+			that.introduce(total, count);
 		}		
 	}
 	var el = $('<canvas width=400 height=400>');
-	$('#canvas-wrapper').append(el);
-	elements[count] = new Letter(el.get(0),{exclude: elements});
-	elements[count].introduce({onComplete: onComplete});
+	$(this.div).append(el);
+	this.elements[count] = new this.type(el.get(0),{exclude: this.elements});
+	/*
+	onComplete();
+	/*/
+	this.elements[count].introduce({onComplete: onComplete});
+	//*/
 }
 
-function firstPeriod(elements) {
-	//@todo show the three letters side by side
-	//@todo highlight and unhighlight the letters as we play them
-	//@todo move sound playing responsibility into the element object for encapsulation
-	console.log(elements);
-	playSound(elements[0].letter+'.wav');
-	setTimeout(function(){						
-		playSound(elements[1].letter+'.wav');
+ThreePeriodLesson.prototype.firstPeriod = function() {
+	console.log(this.elements);
+	var that = this;
+	var el = $('<canvas width=400 height=400>');
+	$(that.div).append(el);
+	el.css('border','10px solid yellow');
+	that.elements[0].draw(el.get(0));
+	that.elements[0].playName();
+	setTimeout(function(){
+		el.css('border','1px solid black');
+		el = $('<canvas width=400 height=400>');
+		$(that.div).append(el);
+		el.css('border','10px solid yellow');
+		that.elements[1].draw(el.get(0));
+		that.elements[1].playName();
 	},2000);
 	setTimeout(function(){						
-		playSound(elements[2].letter+'.wav');
+		el.css('border','1px solid black');
+		el = $('<canvas width=400 height=400>');
+		$(that.div).append(el);
+		el.css('border','10px solid yellow');
+		that.elements[2].draw(el.get(0));
+		that.elements[2].playName();
 	},4000);
 	setTimeout(function(){						
-		secondPeriod(elements);
+		el.css('border','1px solid black');
+		that.secondPeriod(that.elements);
 	},6000);
 }
 
-function secondPeriod(elements) {
+ThreePeriodLesson.prototype.secondPeriod = function() {
 	/*
 	 * @todo say the sound and ask the child to touch that letter in the following order:
 	 * last, first, second, random, random from other two, remaining
 	 */
-	thirdPeriod(elements);
+	this.thirdPeriod();
 }
 
-function thirdPeriod(elements) {
+ThreePeriodLesson.prototype.thirdPeriod = function() {
 	// @todo ask what sound each letter makes randomly until they get them all right or we realize they're not ready
-	cleanup();
 }
 
-function cleanup() {
-	$('#canvas-wrapper').html('');
+ThreePeriodLesson.prototype.cleanup = function() {
+	$(this.div).html('');
 }
 

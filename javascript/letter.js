@@ -21,9 +21,18 @@ var Letter = function(canvas,options) {
 	this.letter = possible.charAt(Math.floor(Math.random() * possible.length));
 	if(typeof(options) === 'object') {
 		if(('exclude' in options) && typeof(options.exclude) === 'object') {
-			while(options.exclude.indexOf(this.letter) !== -1) {
-				this.letter = possible.charAt(Math.floor(Math.random() * possible.length));
-			}
+			var duplicate;
+			do {
+				for(var i in options.exclude) {
+					if(options.exclude[i].letter == this.letter) {
+						duplicate = true;
+						this.letter = possible.charAt(Math.floor(Math.random() * possible.length));
+						break;
+					} else {
+						duplicate = false;
+					}
+				}
+			} while(duplicate);
 		}
 	}
 }
@@ -35,26 +44,37 @@ Letter.prototype.introduce = function(options) {
 		}
 	}
 	this.draw();
-	playSound(this.letter+'-intro.wav');
+	this.playIntroduction();
 	var that = this;
 	setTimeout(function(){
 		that.demonstrate();
 	},4500);
 }
 
-Letter.prototype.draw = function() {
-		var context = this.canvas.getContext('2d');
-		context.font = "300px sans-serif";
-		context.fillStyle = "DarkKhaki";
-		context.textAlign = "center";
-		context.fillText(this.letter, this.canvas.width/2, 300); 
+Letter.prototype.playIntroduction = function() {
+	playSound(this.letter+'-intro.wav');	
+}
+
+Letter.prototype.playName = function(count) {
+	if(!count) count=1;
+	playSound(this.letter+'.wav',count*400,count); 	
+}
+
+Letter.prototype.draw = function(canvas) {
+	if(canvas) {
+		this.canvas = canvas;
+	}	
+	var context = this.canvas.getContext('2d');
+	context.font = "300px sans-serif";
+	context.fillStyle = "DarkKhaki";
+	context.textAlign = "center";
+	context.fillText(this.letter, this.canvas.width/2, 300); 
 }
 
 Letter.prototype.demonstrate = function() {
 	//@todo have an animated hand lead the tracing (super hard)
-	//@todo the tracing algorithm sucks... is there anything out there that can draw letters as polylines?
-	playSound(this.letter+'.wav',1200,3); 
-	
+	//@todo the tracing algorithm sucks... is there anything out there that can draw letters as polylines?	
+	this.playName(3);
 	var dashLen = 80000, dashOffset = dashLen, speed = 4;
 
 	var context = this.canvas.getContext('2d');
