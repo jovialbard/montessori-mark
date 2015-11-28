@@ -27,7 +27,7 @@ ThreePeriodLesson.prototype.introduce = function(total, count) {
 	var el = $('<canvas width=400 height=400>');
 	$(this.div).append(el);
 	this.elements[count] = new this.type(el.get(0),{exclude: this.elements});
-	/*
+	//* Toggle to skip introductions
 	onComplete();
 	/*/
 	this.elements[count].introduce({onComplete: onComplete});
@@ -65,15 +65,87 @@ ThreePeriodLesson.prototype.firstPeriod = function() {
 }
 
 ThreePeriodLesson.prototype.secondPeriod = function() {
-	/*
-	 * @todo say the sound and ask the child to touch that letter in the following order:
-	 * last, first, second, random, random from other two, remaining
-	 */
+	//@todo, make this work for group sizes other than 3
+	//ask in this order: last, first, middle, first, middle, last
+	this.secondPeriodQuestions = [2,0,1,0,1,2];
+	this.secondPeriodAsked = 0;
+	this.secondPeriodTimedOut = 0;
+	this.secondPeriodAsk();
+}
+
+ThreePeriodLesson.prototype.secondPeriodAsk = function() {
+	var that = this;
+	for(var i in this.elements) {
+		this.elements[i].canvas.onclick = function(){that.secondPeriodIncorrect();};
+	}
+	var e = this.elements[this.secondPeriodQuestions[0]];
+	e.canvas.onclick = function(){that.secondPeriodCorrect();};
+	e.askRecognize();
+	this.secondPeriodTimeoutID = setTimeout(function(){
+		if(this.secondPeriodTimedOut > 3) {
+			that.secondPeriodCancel();
+		} else {
+			that.secondPeriodTimedOut++;
+			secondPeriodAsk();
+		}
+	},6000);
+}
+
+ThreePeriodLesson.prototype.secondPeriodCorrect = function() {
+	//@todo indicate correct
+	this.secondPeriodAnswered();
+	if(this.secondPeriodQuestions.length) {
+		this.secondPeriodAsk();
+	} else {
+		this.thirdPeriod();
+	}
+}
+
+ThreePeriodLesson.prototype.secondPeriodIncorrect = function() {
+	//@todo indicate incorrect
+	var i = this.secondPeriodQuestions[0];
+	this.secondPeriodAnswered();
+	if(this.secondPeriodAsked > 12) {
+		this.secondPeriodCancel();
+		return;
+	}
+	//add a random element in at the end of the queue
+	var j;
+	do {
+		j = Math.floor(Math.random() * this.elements.length);
+	} while(j === i);
+	this.secondPeriodQuestions.push(j);
+	//add the missed element in at the end of the queue
+	this.secondPeriodQuestions.push(i);
+	this.secondPeriodAsk();
+}
+
+ThreePeriodLesson.prototype.secondPeriodAnswered = function() {
+	clearTimeout(this.secondPeriodTimeoutID);
+	this.secondPeriodTimedOut = 0;
+	this.secondPeriodAsked++;
+	//remove completed element, ensure next element is not the same
+	while(this.secondPeriodQuestions.length > 1 
+			&& this.secondPeriodQuestions[0] === this.secondPeriodQuestions[1]) {
+		this.secondPeriodQuestions.shift();
+	}
+	this.secondPeriodQuestions.shift();
+}
+
+ThreePeriodLesson.prototype.secondPeriodCancel = function() {
+	playSound('6-thank-you.wav');
+	this.cleanup();
+}
+
+ThreePeriodLesson.prototype.secondPeriodCompleted = function() {
+	for(var i in this.elements) {
+		this.elements[i].canvas.onclick = function() {};
+	}
 	this.thirdPeriod();
 }
 
 ThreePeriodLesson.prototype.thirdPeriod = function() {
-	// @todo ask what sound each letter makes randomly until they get them all right or we realize they're not ready
+	// @todo ask what sound each letter makes randomly six times (we can't tell if they're doing it right
 }
 
 ThreePeriodLesson.prototype.cleanup = function() {

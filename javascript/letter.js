@@ -60,6 +60,14 @@ Letter.prototype.playName = function(count) {
 	playSound(this.letter+'.wav',count*400,count); 	
 }
 
+Letter.prototype.askRecognize = function(onComplete) {
+	playSound('4-touch.wav'); 	
+	var that = this;
+	setTimeout(function(){
+		that.playName();
+	},1000);
+}
+
 Letter.prototype.draw = function(canvas) {
 	if(canvas) {
 		this.canvas = canvas;
