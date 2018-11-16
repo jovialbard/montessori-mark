@@ -1,0 +1,97 @@
+<style>
+canvas {
+	border:6px solid #000;
+}
+</style>
+
+<canvas id="canvas1" width=920 height=570></canvas>
+<canvas id="canvas2" width=920 height=570 style="display:none;"></canvas>
+
+<script type="text/javascript" src="javascript/StringTracer.js"></script>
+<script type="text/javascript">
+	var ctx = document.getElementById("canvas1").getContext("2d");
+	var _ctx = document.getElementById("canvas2").getContext("2d");
+	var letter_spacing = 0;
+	var initialize = {
+		stringNum : 1,
+		drawBackground: function(){
+			this.drawLine(0,15,920,15);
+			this.drawLine(0,55,920,55,1);
+			this.drawLine(0,95,920,95);
+			this.drawLine(0,155,920,155);
+			this.drawLine(0,195,920,195,1);
+			this.drawLine(0,235,920,235);
+			this.drawLine(0,295,920,295);
+			this.drawLine(0,335,920,335,1);
+			this.drawLine(0,375,920,375);
+			this.drawLine(0,435,920,435);
+			this.drawLine(0,475,920,475,1);
+			this.drawLine(0,515,920,515);
+			this.drawLine(60,0,60,570);
+		},
+		
+		drawLine: function(startX,startY,endX,endY,dashed=0){
+			ctx.lineWidth = 2;
+			ctx.strokeStyle='#000';
+			dashed == 1 ? ctx.setLineDash([6]) : ctx.setLineDash([0]);
+			ctx.beginPath();
+			ctx.moveTo(startX,startY);
+			ctx.lineTo(endX,endY);
+			ctx.stroke();
+		},
+		
+		iterate: function(){
+			switch (this.stringNum) {
+				case 1:
+					new StringTracer({	
+						string: "dog",
+						color: 'black',
+						animationSpeed: 0,
+						lineDash: [10,1],
+						xpos: 0,
+						ypos: 0,
+						fontSize: 20,
+						canvas: document.getElementById("canvas1"),
+						_canvas: document.getElementById("canvas2"),
+						complete: function(){initialize.stringNum++; initialize.iterate();}
+					});
+				break;
+				
+				case 2:
+					new StringTracer({		
+						string: "bat",
+						color: 'green',
+						animationSpeed: 100,
+						lineCap: 'round',
+						xpos: 200,
+						ypos: 155,
+						fontSize: 80,
+						canvas: document.getElementById("canvas1"),
+						_canvas: document.getElementById("canvas2"),
+						complete: function(){initialize.stringNum++; initialize.iterate();}
+					});
+				break;
+				
+				case 3:
+					new StringTracer({		
+						string: "cat",
+						color: 'blue',
+						animationSpeed: 3,
+						xpos: 300,
+						ypos: 300,
+						fontSize: 160,
+						canvas: document.getElementById("canvas1"),
+						_canvas: document.getElementById("canvas2"),
+						complete: function(){initialize.stringNum++; initialize.iterate();}
+					});
+				break;
+			}
+		}
+	}
+	
+	//initialize.drawBackground();
+	_ctx.drawImage(ctx.canvas, 0, 0);
+	initialize.iterate();
+	
+	
+</script>

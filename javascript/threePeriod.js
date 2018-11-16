@@ -27,7 +27,7 @@ ThreePeriodLesson.prototype.introduce = function(total, count) {
 	var el = $('<canvas width=400 height=400>');
 	$(this.div).append(el);
 	this.elements[count] = new this.type(el.get(0),{exclude: this.elements});
-	//* Toggle to skip introductions
+	/* Toggle to skip introductions
 	onComplete();
 	/*/
 	this.elements[count].introduce({onComplete: onComplete});
